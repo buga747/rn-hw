@@ -1,234 +1,170 @@
-import React, { useState } from "react";
 import {
-  Image,
-  Keyboard,
-  KeyboardAvoidingView,
   StyleSheet,
+  View,
+  ImageBackground,
   Text,
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
+  KeyboardAvoidingView,
   useWindowDimensions,
   Platform,
+  Keyboard,
 } from "react-native";
-import { Camera } from "expo-camera";
-import * as Location from "expo-location";
-import { MaterialIcons } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
+import { useState } from "react";
+// ICONS
+import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 
-const initialState = {
-  name: "",
-  place: "",
-};
+const CreatePostsScreen = () => {
+  const [isKeybordHidden, setIsKeybordHidden] = useState(true);
+  const [isName, setIsName] = useState(false);
+  const [isLocation, setIsLocation] = useState(false);
 
-export default function CreatePostsScreen({ navigation }) {
-  const [state, setState] = useState(initialState);
-  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
-  const [camera, setCamera] = useState(null);
-  const [photo, setPhoto] = useState(null);
-  const [location, setLocation] = useState(null);
+  const { width, height } = useWindowDimensions();
 
-  const { width } = useWindowDimensions();
-
-  const takePhoto = async () => {
-    const photo = await camera.takePictureAsync();
-    if (photo.uri) {
-      setPhoto(photo.uri);
-    }
-    const location = await Location.getCurrentPositionAsync({});
-    setLocation({
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-    });
-  };
-
-  const sendPhoto = () => {
-    setIsShowKeyboard(false);
-    Keyboard.dismiss();
-    if (photo && location && state) {
-      setIsShowKeyboard(false);
-      setPhoto(null);
-      setLocation(null);
-      setState(initialState);
-      navigation.navigate("DefaultScreen", { photo });
-    }
-  };
-
-  const keyboardHide = () => {
-    setIsShowKeyboard(false);
+  const onKeyboardClose = () => {
+    setIsKeybordHidden(true);
     Keyboard.dismiss();
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}>
-      <TouchableWithoutFeedback onPress={keyboardHide}>
-        <View style={styles.box}>
-          {!isShowKeyboard && (
-            <Camera style={styles.camera} ref={setCamera}>
-              <TouchableOpacity
-                style={{
-                  ...styles.btn,
-                  transform: [{ translateX: -30 }, { translateY: -30 }],
-                }}
-                onPress={takePhoto}
-                activeOpacity={0.8}>
-                <MaterialIcons name='camera-alt' size={24} color='#fff' />
-              </TouchableOpacity>
-              {photo && (
-                <View style={styles.takePhotoContainer}>
-                  <Image
-                    source={{ uri: photo }}
-                    style={{ width: 200, height: 200, borderRadius: 10 }}
-                  />
-                </View>
-              )}
-            </Camera>
-          )}
-          <TouchableOpacity style={{ marginTop: 8 }} activeOpacity={0.8}>
-            <Text style={styles.text}>
-              {photo ? "Редагувати фото" : "Завантажити фото"}
-            </Text>
-          </TouchableOpacity>
-
-          <View style={styles.wrapInput}>
-            <TextInput
-              style={{ ...styles.input, width: width }}
-              placeholder='Назва...'
-              placeholderTextColor='#bdbdbd'
-              onFocus={() => setIsShowKeyboard(true)}
-              value={state.name}
-              onChangeText={(value) =>
-                setState((prev) => ({ ...prev, name: value }))
-              }
-            />
-          </View>
-          <View style={styles.wrapInput}>
-            <AntDesign
-              name='enviromento'
-              size={24}
-              color='#bdbdbd'
-              style={styles.icon}
-            />
-            <TextInput
-              style={{ ...styles.input, paddingStart: 28, width: width }}
-              placeholder='Місцевість...'
-              placeholderTextColor='#bdbdbd'
-              onFocus={() => setIsShowKeyboard(true)}
-              value={state.place}
-              onChangeText={(value) =>
-                setState((prev) => ({ ...prev, place: value }))
-              }
-            />
-          </View>
-          <TouchableOpacity
+    <TouchableWithoutFeedback onPress={onKeyboardClose}>
+      <View style={{ ...styles.container, width: width, height: height }}>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" && "padding"}>
+          <View
             style={{
-              ...styles.onBtn,
-              backgroundColor: photo ? "#ff6c00" : "#f6f6f6",
-            }}
-            onPress={sendPhoto}
-            activeOpacity={0.8}>
-            <Text
+              width: width - 16 * 2,
+              paddingBottom: isKeybordHidden ? 111 : 20,
+            }}>
+            <View style={styles.photoContainer}>
+              <ImageBackground></ImageBackground>
+              <TouchableOpacity activeOpacity={0.5} style={styles.photoBtn}>
+                <FontAwesome name='camera' size={24} color='#BDBDBD' />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.photoText}>Завантажте фото</Text>
+            <TextInput
               style={{
-                ...styles.btnTitle,
-                color: photo ? "#fff" : "#bdbdbd",
-              }}>
-              Опублікувати
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.deleteBtn}
-            onPress={() => setState(initialState)}>
-            <Feather name='trash-2' size={24} color='#bdbdbd' />
-          </TouchableOpacity>
-        </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+                ...styles.input,
+                borderColor: isName ? "#FF6C00" : "#E8E8E8",
+              }}
+              placeholder='Назва'
+              placeholderTextColor='#BDBDBD'
+              onFocus={() => {
+                setIsKeybordHidden(false);
+                setIsName(true);
+              }}
+              onBlur={() => setIsName(false)}
+              onSubmitEditing={() => setIsKeybordHidden(true)}
+            />
+            <View style={{ marginTop: 16 }}>
+              <TextInput
+                style={{
+                  ...styles.input,
+                  paddingLeft: 28,
+                  borderColor: isLocation ? "#FF6C00" : "#E8E8E8",
+                }}
+                placeholder='Місцевість...'
+                placeholderTextColor='#BDBDBD'
+                onFocus={() => {
+                  setIsKeybordHidden(false);
+                  setIsLocation(true);
+                }}
+                onBlur={() => setIsLocation(false)}
+                onSubmitEditing={() => setIsKeybordHidden(true)}
+              />
+              <View style={styles.mapPin}>
+                <Feather
+                  name='map-pin'
+                  size={24}
+                  color={isLocation ? "#FF6C00" : "#E8E8E8"}
+                />
+              </View>
+            </View>
+
+            <TouchableOpacity activeOpacity={0.8} style={styles.postBtn}>
+              <Text style={styles.PostBtnText}>Опублікувати</Text>
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      </View>
+    </TouchableWithoutFeedback>
   );
+};
+
+{
+  // <TouchableOpacity activeOpacity={0.8} style={styles.deleteBtn}>
+  //   <Feather name='trash-2' size={24} color='#BDBDBD' />
+  // </TouchableOpacity>;
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffff",
+    alignItems: "center",
+    justifyContent: "flex-end",
   },
-  box: {
-    marginHorizontal: 16,
-  },
-  camera: {
-    position: "relative",
+  photoContainer: {
     height: 240,
-    marginTop: 32,
+    backgroundColor: "#F6F6F6",
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  btn: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    width: 60,
-    height: 60,
-    borderRadius: 50,
-    backgroundColor: "rgba(255, 255, 255, 0.4)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  takePhotoContainer: {
-    position: "absolute",
-    top: 10,
-    left: 10,
-    borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#fff",
+    borderColor: "#E8E8E8",
+    marginBottom: 8,
   },
-  text: {
+  photoBtn: {
+    width: 100,
+    height: 100,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  photoText: {
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
-    color: "#bdbdbd",
-    fontFamily: "Roboto-Regular",
-  },
-  wrapInput: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#e8e8e8",
-    marginTop: 32,
-    paddingBottom: 15,
+    color: "#BDBDBD",
+    marginBottom: 32,
   },
   input: {
-    color: "#212121",
-    fontSize: 16,
-    lineHeight: 19,
-  },
-  icon: {
-    position: "absolute",
-    bottom: 20,
-  },
-  onBtn: {
     height: 50,
-    borderRadius: 100,
-    marginTop: 43,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  btnTitle: {
+    borderBottomWidth: 1,
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
+    color: "#212121",
+  },
+  mapPin: {
+    position: "absolute",
+    top: 13,
+  },
+  postBtn: {
+    paddingVertical: 16,
+    backgroundColor: "#F6F6F6",
+    borderRadius: 100,
+    alignItems: "center",
+    marginTop: 32,
+  },
+  PostBtnText: {
     fontFamily: "Roboto-Regular",
+    fontSize: 16,
+    lineHeight: 19,
+    color: "#BDBDBD",
   },
   deleteBtn: {
-    backgroundColor: "#f6f6f6",
     width: 70,
     height: 40,
-    borderRadius: 20,
-    justifyContent: "center",
+    alignSelf: "center",
     alignItems: "center",
-    marginLeft: "auto",
-    marginRight: "auto",
-    marginTop: 100,
-    marginBottom: 22,
+    justifyContent: "center",
+    borderRadius: 20,
+    backgroundColor: "#F6F6F6",
+    position: "absolute",
+    bottom: 34,
   },
 });
+
+export default CreatePostsScreen;
