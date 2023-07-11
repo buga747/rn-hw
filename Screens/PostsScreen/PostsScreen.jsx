@@ -1,16 +1,44 @@
-import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { View, Text, ScrollView } from "react-native";
 
-import CommentsScreen from "../CommentsScreen/CommentsScreen";
-import MapScreen from "../MapScreen/MapScreen";
+import { styles } from "./PostsScreenStyles";
+import AuthenticatedUserInfo from "../../components/AuthenticatedUserInfo";
+import PostComponent from "../../components/PostComponent/PostComponent";
+import { posts } from "../../posts";
 
-const NestedStack = createNativeStackNavigator();
+const PostsScreen = () => {
+   
+    return (
+        <View style={styles.postsScreenContainer}>
+            <AuthenticatedUserInfo />
+            <ScrollView
+                style={{ margin: 0, padding: 16 }}
+                showsVerticalScrollIndicator={false}
+            >
+                {posts.map(
+                    ({
+                        img,
+                        description,
+                        likes,
+                        comments,
+                        locationName,
+                        geoLocation,
+                    }) => {
+                        return (
+                            <PostComponent
+                                key={description}
+                                image={img}
+                                description={description}
+                                likes={likes}
+                                comments={comments}
+                                locationName={locationName}
+                                geoLocation={geoLocation}
+                            />
+                        );
+                    }
+                )}
+            </ScrollView>
+        </View>
+    );
+};
 
-export default function PostsScreen() {
-  return (
-    <NestedStack.Navigator screenOptions={{ headerShown: false }}>
-      <NestedStack.Screen name='Comments' component={CommentsScreen} />
-      <NestedStack.Screen name='Map' component={MapScreen} />
-    </NestedStack.Navigator>
-  );
-}
+export default PostsScreen;
