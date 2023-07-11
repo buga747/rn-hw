@@ -1,18 +1,24 @@
-import { StatusBar } from "expo-status-bar";
+import "react-native-gesture-handler";
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
 import { StyleSheet, View } from "react-native";
 import { useFonts } from "expo-font";
-import { createStackNavigator } from "@react-navigation/stack";
-import { NavigationContainer } from "@react-navigation/native";
-import LoginScreen from "./Screens/LoginScreen/LoginScreen";
-import RegistrationScreen from "./Screens/RegistrationScreen/RegistrationScreen";
-import Home from "./Screens/Home/Home";
-const AuthStack = createStackNavigator();
 
-export default function App() {
+import RegistrationScreen from "./Screens/RegistrationScreen";
+import LoginScreen from "./Screens/LoginScreen";
+import PostsScreen from "./Screens/PostsScreen/PostsScreen";
+import CommentsScreen from "./Screens/CommentsScreen";
+import MapScreen from "./Screens/MapScreen/MapScreen";
+import Home from "./Screens/Home/Home";
+
+const MainStack = createStackNavigator();
+
+const App = () => {
   const [fontsLoaded] = useFonts({
-    "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
-    "Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
-    "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
+    "Inter-Medium": require("./assets/fonts/Inter/static/Inter-Medium.ttf"),
+    "Roboto-Medium": require("./assets/fonts/Roboto/Roboto-Medium.ttf"),
+    "Roboto-Bold": require("./assets/fonts/Roboto/Roboto-Bold.ttf"),
   });
 
   if (!fontsLoaded) {
@@ -22,35 +28,45 @@ export default function App() {
   return (
     <View style={styles.container}>
       <NavigationContainer>
-        <AuthStack.Navigator>
-          <AuthStack.Screen
-            options={{
-              headerShown: false,
-            }}
-            name='Register'
-            component={RegistrationScreen}
-          />
-          <AuthStack.Screen
-            options={{
-              headerShown: false,
-            }}
-            name='Login'
-            component={LoginScreen}
-          />
-          <AuthStack.Screen
+        <MainStack.Navigator initialRouteName='LoginScreen'>
+          <MainStack.Screen
             options={{ headerShown: false }}
             name='Home'
             component={Home}
           />
-        </AuthStack.Navigator>
+          <MainStack.Screen
+            options={{ headerShown: false }}
+            name='RegistrationScreen'
+            component={RegistrationScreen}
+          />
+          <MainStack.Screen
+            options={{ headerShown: false }}
+            name='LoginScreen'
+            component={LoginScreen}
+          />
+          <MainStack.Screen
+            options={{ headerShown: false }}
+            name='PostsScreen'
+            component={PostsScreen}
+          />
+          <MainStack.Screen
+            options={{ headerShown: false }}
+            name='CommentsScreen'
+            component={CommentsScreen}
+          />
+          <MainStack.Screen name='MapScreen' component={MapScreen} />
+        </MainStack.Navigator>
       </NavigationContainer>
-      <StatusBar style='auto' />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
+    position: "relative",
     flex: 1,
+    backgroundColor: "#fff",
   },
 });
+
+export default App;
