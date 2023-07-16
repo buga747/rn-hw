@@ -11,6 +11,8 @@ import PostsScreen from "./Screens/PostsScreen/PostsScreen";
 import CommentsScreen from "./Screens/CommentsScreen";
 import MapScreen from "./Screens/MapScreen/MapScreen";
 import Home from "./Screens/Home/Home";
+import { Provider } from "react-redux/es";
+import store from "./redux/store";
 
 const MainStack = createStackNavigator();
 
@@ -26,38 +28,40 @@ const App = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <NavigationContainer>
-        <MainStack.Navigator initialRouteName='LoginScreen'>
-          <MainStack.Screen
-            options={{ headerShown: false }}
-            name='Home'
-            component={Home}
-          />
-          <MainStack.Screen
-            options={{ headerShown: false }}
-            name='RegistrationScreen'
-            component={RegistrationScreen}
-          />
-          <MainStack.Screen
-            options={{ headerShown: false }}
-            name='LoginScreen'
-            component={LoginScreen}
-          />
-          <MainStack.Screen
-            options={{ headerShown: false }}
-            name='PostsScreen'
-            component={PostsScreen}
-          />
-          <MainStack.Screen
-            options={{ headerShown: false }}
-            name='CommentsScreen'
-            component={CommentsScreen}
-          />
-          <MainStack.Screen name='MapScreen' component={MapScreen} />
-        </MainStack.Navigator>
-      </NavigationContainer>
-    </View>
+    <Provider store={store}>
+      <View style={styles.container}>
+        <NavigationContainer>
+          <MainStack.Navigator initialRouteName='LoginScreen'>
+            <MainStack.Screen
+              options={{ headerShown: false }}
+              name='Home'
+              component={Home}
+            />
+            <MainStack.Screen
+              options={{ headerShown: false }}
+              name='RegistrationScreen'
+              component={RegistrationScreen}
+            />
+            <MainStack.Screen
+              options={{ headerShown: false }}
+              name='LoginScreen'
+              component={LoginScreen}
+            />
+            <MainStack.Screen
+              options={{ headerShown: false }}
+              name='PostsScreen'
+              component={PostsScreen}
+            />
+            <MainStack.Screen
+              options={{ headerShown: false }}
+              name='CommentsScreen'
+              component={CommentsScreen}
+            />
+            <MainStack.Screen name='MapScreen' component={MapScreen} />
+          </MainStack.Navigator>
+        </NavigationContainer>
+      </View>
+    </Provider>
   );
 };
 

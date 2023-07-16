@@ -11,32 +11,71 @@ import {
   ImageBackground,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
 
 import { styles } from "./RegistrationScreenStyles";
 import Background from "../../assets/images/photo.jpg";
+import Default_avatar from "../../assets/images/default_avatar.png";
+
 import RegistrationImageAddButton from "../../components/RegistrationImageAddButton";
 import RegistrationImageRemoveButton from "../../components/RegistrationImageRemoveButton";
 import InputComponent from "../../components/InputComponent";
-import { useNavigation } from "@react-navigation/native";
+import { registration } from "../../redux/authorization/authOperations";
+import { selectIsAuthorized } from "../../redux/authorization/authSelectors";
 
 const RegistrationScreen = () => {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const [login, setLogin] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [userAvatar, setUserAavatar] = useState(null);
+  const [userAvatar, setUserAvatar] = useState(null);
+  const isAutorized = useSelector(selectIsAuthorized);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
   const handleRemoveImage = () => {
-    setUserAavatar(null);
+    setUserAvatar(null);
   };
 
   const handleSubmitButtonPress = () => {
-    navigation.navigate("MapScreen");
+    if (!login || !email || !password) {
+      alert("Please enter valid credentials!");
+      return;
+    }
+    if (!userAvatar) {
+      alert("Please upload avatar");
+      return;
+    }
+    dispatch(
+      registration({
+        userName: login,
+        email: email,
+        password: password,
+        userPhoto: userAvatar,
+      })
+    ).then((result) => {
+      result.type === "authorization/registration/fulfilled"
+        ? navigation.navigate("Home", {
+            screen: "PostScreen",
+            params: {
+              user: email,
+            },
+          })
+        : alert("Incorect data");
+    });
+    isAutorized &&
+      navigation.navigate("Home", {
+        screen: "PostScreen",
+        params: {
+          user: email,
+        },
+      });
+    // navigation.navigate("MapScreen");
   };
 
   const uploadAvatar = async () => {
@@ -47,7 +86,9 @@ const RegistrationScreen = () => {
       quality: 1,
     });
 
-    if (!result.canceled) setUserAavatar(result.assets[0].uri);
+    if (!result.canceled && result.assets.length > 0) {
+      setUserAvatar(result.assets[0].uri);
+    }
   };
 
   return (
