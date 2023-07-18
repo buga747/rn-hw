@@ -16,13 +16,15 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { styles } from "./RegistrationScreenStyles";
 import Background from "../../assets/images/photo.jpg";
-import Default_avatar from "../../assets/images/default_avatar.png";
-
 import RegistrationImageAddButton from "../../components/RegistrationImageAddButton";
 import RegistrationImageRemoveButton from "../../components/RegistrationImageRemoveButton";
 import InputComponent from "../../components/InputComponent";
 import { registration } from "../../redux/authorization/authOperations";
-import { selectIsAuthorized } from "../../redux/authorization/authSelectors";
+import {
+  selectIsAuthorized,
+  selectUserPhoto,
+  selectUserId,
+} from "../../redux/authorization/authSelectors";
 
 const RegistrationScreen = () => {
   const dispatch = useDispatch();
@@ -31,15 +33,17 @@ const RegistrationScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [userAvatar, setUserAvatar] = useState(null);
+  const [userAvatar, setUserAavatar] = useState(null);
   const isAutorized = useSelector(selectIsAuthorized);
+  const userPhoto = useSelector(selectUserPhoto);
+  const useId = useSelector(selectUserId);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
   const handleRemoveImage = () => {
-    setUserAvatar(null);
+    setUserAavatar(null);
   };
 
   const handleSubmitButtonPress = () => {
@@ -48,7 +52,7 @@ const RegistrationScreen = () => {
       return;
     }
     if (!userAvatar) {
-      alert("Please upload avatar");
+      alert("Please add user photo!");
       return;
     }
     dispatch(
@@ -68,6 +72,7 @@ const RegistrationScreen = () => {
           })
         : alert("Incorect data");
     });
+
     isAutorized &&
       navigation.navigate("Home", {
         screen: "PostScreen",
@@ -76,6 +81,9 @@ const RegistrationScreen = () => {
         },
       });
     // navigation.navigate("MapScreen");
+    // console.log(userPhoto);
+    // console.log(isAutorized);
+    // console.log(useId);
   };
 
   const uploadAvatar = async () => {
@@ -86,9 +94,7 @@ const RegistrationScreen = () => {
       quality: 1,
     });
 
-    if (!result.canceled && result.assets.length > 0) {
-      setUserAvatar(result.assets[0].uri);
-    }
+    if (!result.canceled) setUserAavatar(result.assets[0].uri);
   };
 
   return (
