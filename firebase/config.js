@@ -9,15 +9,15 @@ import { getDatabase } from "firebase/database";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB-vJ2hpLrgXpVhuBgtQ-YAmvlbtf7TxtA",
-  authDomain: "react-native-389314.firebaseapp.com",
+  apiKey: "AIzaSyCrjld9ymM828Xm0X1Rk8mSBKFQxPQFV50",
+  authDomain: "rn-hw-19370.firebaseapp.com",
   databaseURL:
-    "https://react-native-389314-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "react-native-389314",
-  storageBucket: "react-native-389314.appspot.com",
-  messagingSenderId: "174149948153",
-  appId: "1:174149948153:web:ff2ff8e88c4a0b1a2f8828",
-  measurementId: "G-7SRPKFRJ1J",
+    "https://rn-hw-19370-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "rn-hw-19370",
+  storageBucket: "rn-hw-19370.appspot.com",
+  messagingSenderId: "1027063642897",
+  appId: "1:1027063642897:web:b6587ddc34625303256ab0",
+  measurementId: "G-9XMGSJR3JV",
 };
 
 // Initialize Firebase
