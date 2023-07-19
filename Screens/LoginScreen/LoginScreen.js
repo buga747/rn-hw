@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import React, { useState, useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
 import {
   View,
   Text,
@@ -12,11 +12,12 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 
 import { styles } from "./LoginScreenStyles";
-import Background from "../../assets/images/photo.jpg";
+import Background from "../../assets/images/app_background.jpg";
 import InputComponent from "../../components/InputComponent";
 import {
   selectIsAuthorized,
   selectUserPhoto,
+  selectUserId,
 } from "../../redux/authorization/authSelectors";
 import { login } from "../../redux/authorization/authOperations";
 
@@ -26,19 +27,22 @@ const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const isAutorized = useSelector(selectIsAuthorized);
+  const isAuthorized = useSelector(selectIsAuthorized);
   const userPhoto = useSelector(selectUserPhoto);
+  const userId = useSelector(selectUserId);
+
+  useEffect(() => {
+    // If the user is already authorized, navigate to the posts screen
+    if (isAuthorized) {
+      navigateToPostsScreen();
+    }
+  }, [isAuthorized]);
 
   const navigateToPostsScreen = () => {
     navigation.navigate("Home", {
       screen: "PostScreen",
-      params: {
-        user: userPhoto,
-      },
     });
   };
-
-  isAutorized && navigateToPostsScreen();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -52,13 +56,7 @@ const LoginScreen = () => {
     dispatch(login({ email, password })).then((result) => {
       result.type === "authorization/login/fulfilled"
         ? navigateToPostsScreen()
-        : // ? navigation.navigate("Home", {
-          //       screen: "PostScreen",
-          //       params: {
-          //           user: email,
-          //       },
-          //   })
-          alert("Incorect data");
+        : alert("Incorrect data");
     });
   };
 

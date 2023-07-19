@@ -5,27 +5,29 @@ import * as ImagePicker from "expo-image-picker";
 import { useSelector } from "react-redux";
 
 import { styles } from "./ProfileScreenStyles";
-import Background from "../../assets/images/photo.jpg";
+import Background from "../../assets/images/app_background.jpg";
 import RegistrationImageAddButton from "../../components/RegistrationImageAddButton";
 import RegistrationImageRemoveButton from "../../components/RegistrationImageRemoveButton";
 import PostComponent from "../../components/PostComponent/PostComponent";
 import LogoutButton from "../../components/LogoutButton";
-// import { posts } from "../../posts";
 import {
   selectUserPhoto,
   selectUserName,
 } from "../../redux/authorization/authSelectors";
-import { selectCurrentUserPosts } from "../../redux/posts/postsSelectors";
+import {
+  selectAllPosts,
+  selectCurrentUserPosts,
+} from "../../redux/posts/postsSelectors";
 
 const ProfileScreen = () => {
-  const posts = useSelector(selectCurrentUserPosts);
+  const posts = useSelector(selectAllPosts);
   const userPhoto = useSelector(selectUserPhoto);
   const userName = useSelector(selectUserName);
-  const [userAvatar, setUserAavatar] = useState(userAvatar);
+  const [userAvatar, setUserAvatar] = useState(userPhoto); // Corrected the state variable name
   const navigation = useNavigation();
 
   const handleRemoveImage = () => {
-    setUserAavatar(null);
+    setUserAvatar(null);
   };
 
   const uploadAvatar = async () => {
@@ -36,7 +38,7 @@ const ProfileScreen = () => {
       quality: 1,
     });
 
-    if (!result.canceled) setUserAavatar(result.assets[0].uri);
+    if (!result.cancelled) setUserAvatar(result.uri); // Corrected the property name 'cancelled'
   };
 
   return (
@@ -50,9 +52,9 @@ const ProfileScreen = () => {
         </View>
 
         <View style={styles.userImageContainer}>
-          {userPhoto && (
+          {userAvatar && (
             <Image
-              source={{ uri: userPhoto }}
+              source={{ uri: userAvatar }}
               style={{
                 width: 120,
                 height: 120,
@@ -60,12 +62,10 @@ const ProfileScreen = () => {
               }}
             />
           )}
-          {!userPhoto ? (
-            <RegistrationImageAddButton
-              onPress={uploadAvatar}></RegistrationImageAddButton>
+          {!userAvatar ? ( // Updated the condition to check userAvatar
+            <RegistrationImageAddButton onPress={uploadAvatar} />
           ) : (
-            <RegistrationImageRemoveButton
-              onPress={handleRemoveImage}></RegistrationImageRemoveButton>
+            <RegistrationImageRemoveButton onPress={handleRemoveImage} />
           )}
         </View>
 

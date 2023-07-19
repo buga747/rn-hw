@@ -1,20 +1,27 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-import auth from "../../firebase/config";
+import { auth } from "../../firebase/config";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-import storage from "../../firebase/config";
+import { storage } from "../../firebase/config";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+// import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
+
+// const storage = getStorage();
+
+// const upload = async (file, currentUser) => {
+//     const fileRef = ref(storage, "profileAvatars/" + currentUser + ".png");
+//     const snapshot = await uploadBytesResumable(fileRef, file);
+// };
 
 const upload = async (file, currentUser) => {
   const response = await fetch(file);
   const blob = await response.blob();
-  const storageRef = ref(storage, "profileAvatars/" + currentUser + ".png");
-  const uploadTask = uploadBytesResumable(storageRef, blob);
-  await uploadTask;
+  const fileRef = ref(storage, "profileAvatars/" + currentUser + ".png");
+  await uploadBytesResumable(fileRef, blob);
 };
 
 export const registration = createAsyncThunk(
@@ -32,8 +39,6 @@ export const registration = createAsyncThunk(
           displayName: userName,
           photoURL: userPhoto,
         });
-        console.log(userPhoto);
-
         await upload(userPhoto, tryRegistration.user.uid);
         return tryRegistration.user;
       }
@@ -55,6 +60,7 @@ export const login = createAsyncThunk(
         const userPhotoName = uid + ".png";
         const referense = ref(storage, "profileAvatars/" + userPhotoName);
         await getDownloadURL(referense).then((data) => {
+          // console.log(data);
           userPhoto = data;
         });
       }
