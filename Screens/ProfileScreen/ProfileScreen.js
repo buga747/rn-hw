@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { View, Image, Text, ScrollView, ImageBackground } from "react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -13,18 +13,26 @@ import LogoutButton from "../../components/LogoutButton";
 import {
   selectUserPhoto,
   selectUserName,
+  selectUserId,
 } from "../../redux/authorization/authSelectors";
-import {
-  selectAllPosts,
-  selectCurrentUserPosts,
-} from "../../redux/posts/postsSelectors";
+import { selectAllPosts } from "../../redux/posts/postsSelectors";
 
 const ProfileScreen = () => {
   const posts = useSelector(selectAllPosts);
   const userPhoto = useSelector(selectUserPhoto);
   const userName = useSelector(selectUserName);
-  const [userAvatar, setUserAvatar] = useState(userPhoto); // Corrected the state variable name
+  const userId = useSelector(selectUserId);
+  const [userAvatar, setUserAvatar] = useState(userPhoto);
+  const [filteredPosts, setFilteredPosts] = useState([]); // New state variable
   const navigation = useNavigation();
+
+  useEffect(() => {
+    // Filter posts based on userId whenever userId changes
+    const filtered = posts.filter(
+      (item) => item[Object.keys(item)[0]].userId === userId
+    );
+    setFilteredPosts(filtered);
+  }, [posts, userId]);
 
   const handleRemoveImage = () => {
     setUserAvatar(null);
@@ -38,7 +46,7 @@ const ProfileScreen = () => {
       quality: 1,
     });
 
-    if (!result.cancelled) setUserAvatar(result.uri); // Corrected the property name 'cancelled'
+    if (!result.canceled) setUserAvatar(result.uri);
   };
 
   return (
@@ -62,7 +70,7 @@ const ProfileScreen = () => {
               }}
             />
           )}
-          {!userAvatar ? ( // Updated the condition to check userAvatar
+          {!userAvatar ? (
             <RegistrationImageAddButton onPress={uploadAvatar} />
           ) : (
             <RegistrationImageRemoveButton onPress={handleRemoveImage} />
@@ -73,8 +81,9 @@ const ProfileScreen = () => {
         <ScrollView
           style={{ margin: 0, padding: 0 }}
           showsVerticalScrollIndicator={false}>
-          {posts.map((item) => {
+          {filteredPosts.map((item) => {
             const key = Object.keys(item)[0];
+            const post = item[key];
             const {
               img,
               description,
@@ -82,7 +91,7 @@ const ProfileScreen = () => {
               comments,
               locationName,
               geoLocation,
-            } = item[key];
+            } = post;
             return (
               <PostComponent
                 key={key}
