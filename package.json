@@ -33,10 +33,12 @@
     "react-redux": "^8.1.1",
     "redux-persist": "^6.0.0",
     "reselect": "^4.1.8",
-    "urid": "^1.1.0"
+    "urid": "^1.1.0",
+    "expo-dev-client": "~2.2.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "expo-cli": "^6.3.10"
   },
   "private": true
 }

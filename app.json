@@ -21,10 +21,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.buga747.goitreactnativehw06"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1da0be45-a3bf-41f7-a7d5-ef4cfe625e9d"
+      }
     }
   }
 }
